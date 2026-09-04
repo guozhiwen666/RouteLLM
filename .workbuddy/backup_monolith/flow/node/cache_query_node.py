@@ -20,33 +20,10 @@ from utils.semantic_cache import CacheLookup, SemanticCache
 from utils.heuristics import estimate_tokens
 
 
-class CacheQueryState(GraphState):
-    """缓存查询 + 路由决策阶段独有的状态字段。"""
-
-    # ---- 语义缓存 ----
-    embedding: list[float]  # 请求向量（哈希兜底，生产可注入真实 embedding）
-    cache_hit: bool
-    cache_similarity: float
-    cache_entity_consistent: bool  # 实体二次校验是否通过
-    cache_reason: str  # 未命中原因（排查「为什么没省到钱」用）
-    cached_answer: str
-
-    # ---- 路由决策 ----
-    route_stage: str  # cache | force_upgrade | heuristic | self_eval | self_check_upgrade
-    route_tier: str  # 档位名
-    route_reason: str
-    difficulty: str  # simple | moderate | hard
-    confidence: float  # 路由置信度
-    self_eval_raw: str  # 小模型自评原始输出（排障用）
-    force_upgrade_hits: list[str]  # 命中的强制升级规则
-    upgrade_count: int  # 升级次数，防乒乓
-
-
 class CacheQueryNode(BaseNode):
     """语义缓存查询与路由决策节点。"""
 
     name = "cache_query"
-    state_schema = CacheQueryState
 
     def __init__(
         self,

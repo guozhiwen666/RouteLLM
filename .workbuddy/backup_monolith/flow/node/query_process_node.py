@@ -26,31 +26,12 @@ _VALID_ROLES = frozenset({"system", "user", "assistant"})
 DEFAULT_MAX_TOKENS = 1024
 
 
-class QueryProcessState(GraphState):
-    """输入处理阶段独有的状态字段。"""
-
-    # ---- 请求参数（调用方可覆盖，入口节点补齐默认值） ----
-    prompt_version: str  # prompt 版本（缓存失效维度之一）
-    model_version: str  # 模型版本（缓存失效维度之一）
-    output_format: str  # text | strict_json
-    temperature: float
-    max_tokens: int
-    stream: bool  # 是否流式返回（影响输出自检的严格程度）
-
-    # ---- 输入分析产物（下游快筛 / 强制升级 / 缓存二次校验共用） ----
-    context_tokens: int  # 估算的上下文 token 数
-    features: dict  # 启发式特征：code / math / realtime / instructions / language / template
-    has_pii: bool  # 命中 PII → 不写缓存、优先本地推理
-    pii_types: list[str]
-    entities: dict  # 关键实体（地名/时间/金额/型号），缓存二次校验用
-    no_cache: bool  # 涉实时数据 → 不缓存
 
 
 class QueryProcessNode(BaseNode):
     """请求入口节点：把原始请求整理成下游节点可以安全消费的形态。"""
 
     name = "query_process"
-    state_schema = QueryProcessState
 
     def process(self, state: GraphState) -> GraphState:
         messages = state.get("messages") or []

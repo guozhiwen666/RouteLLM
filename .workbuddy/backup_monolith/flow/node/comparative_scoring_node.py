@@ -36,20 +36,10 @@ JUDGE_FAILURE_ALERT_THRESHOLD = 5
 
 
 
-class ScoringState(GraphState):
-    """守门阶段独有的状态字段。"""
-
-    shadow_output: str  # 影子双跑的强模型结果（不返回给用户）
-    judge_score: float  # judge 给出的 SLM 相对强模型的质量分
-    quality_gap: float  # 质量差（正 = SLM 更差）
-    guardian_action: str  # submitted | maintain | raise_threshold | force_frontier
-
-
 class ComparativeScoringNode(BaseNode):
     """影子流量双跑与 judge 评分节点（后台线程）。"""
 
     name = "comparative_scoring"
-    state_schema = ScoringState
 
     def __init__(
         self,

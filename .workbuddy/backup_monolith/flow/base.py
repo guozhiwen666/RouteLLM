@@ -26,14 +26,10 @@ class BaseNode(ABC):
 
     子类必须：
       1. 设置唯一的类属性 `name`；
-      2. 实现 `process(state) -> state`；
-      3. 如有本节点独有的状态字段，声明 `state_schema` 供引擎校验。
+      2. 实现 `process(state) -> state`。
     """
 
     name: str = "base_node"
-
-    # 本节点独有的状态字段声明（GraphState 的子类），没有则留空
-    state_schema: type | None = None
 
     def __init__(self) -> None:
         """强制子类设置 name（沿用原实现的校验逻辑）。"""

@@ -24,17 +24,10 @@ from flow.state import GraphState
 logger = logging.getLogger(__name__)
 
 
-class ResultProcessState(GraphState):
-    """结果定稿阶段独有的状态字段。"""
-
-    shadow: bool  # 本条请求是否被抽中为影子流量（只对本机 SLM 作答的请求抽样）
-
-
 class ResultProcessNode(BaseNode):
     """结果定稿、缓存回写、计量与影子抽样。"""
 
     name = "result_process"
-    state_schema = ResultProcessState
 
     def __init__(
         self,

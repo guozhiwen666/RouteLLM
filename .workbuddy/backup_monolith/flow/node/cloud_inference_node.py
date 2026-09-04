@@ -24,17 +24,10 @@ logger = logging.getLogger(__name__)
 
 
 
-class CloudInferenceState(GraphState):
-    """云端推理阶段独有的状态字段。"""
-
-    cloud_response: str  # 云端模型原始输出
-
-
 class CloudInferenceNode(BaseNode):
     """云端推理节点。"""
 
     name = "cloud_inference"
-    state_schema = CloudInferenceState
 
     def __init__(self, *, client: ChatClient | None = None, config: RoutingConfig | None = None) -> None:
         super().__init__()

@@ -31,17 +31,10 @@ PREFIX_CHECK_MIN_CHARS = 120
 
 
 
-class SLMInferenceState(GraphState):
-    """本地推理阶段独有的状态字段。"""
-
-    slm_response: str  # 本地 SLM 原始输出（自检不通过时要丢弃）
-
-
 class SLMInferenceNode(BaseNode):
     """调用本地 vLLM 推理，并对输出做体检。"""
 
     name = "slm_inference"
-    state_schema = SLMInferenceState
 
     def __init__(self, *, client: ChatClient | None = None, config: RoutingConfig | None = None) -> None:
         super().__init__()

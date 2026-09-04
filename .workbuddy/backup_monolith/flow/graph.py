@@ -32,7 +32,6 @@ class StateGraph:
         # 公共状态 schema（如 GraphState），节点级 schema 由 add_node 收集
         self._schema = schema
         self._nodes: dict[str, Any] = {}
-        self._node_schemas: set[type] = set()
         self._static_edges: dict[str, str] = {}
         self._conditional_edges: dict[str, tuple[Callable[[GraphState], str], dict[str, str]]] = {}
         self._entry: str | None = None
@@ -51,10 +50,6 @@ class StateGraph:
             raise GraphError(f"节点 {name} 必须是 BaseNode 实例或可调用对象")
 
         self._nodes[name] = node
-        # 收集节点级状态 schema（节点在自己模块里声明的独有字段），编译时并入合法字段集合
-        node_schema = getattr(node, "state_schema", None)
-        if isinstance(node_schema, type):
-            self._node_schemas.add(node_schema)
         return self
 
     def add_edge(self, source: str, target: str) -> "StateGraph":
@@ -112,8 +107,8 @@ class StateGraph:
                 if target not in known:
                     raise GraphError(f"条件边 {source} -[{branch}]-> {target} 的终点未注册")
 
-        # 合法字段 = 公共 GraphState ∪ 各节点自己声明的 state_schema
-        allowed = state_fields(self._schema, *self._node_schemas)
+        # 合法字段 = GraphState 声明的全部字段
+        allowed = state_fields(self._schema)
         return CompiledGraph(self, max_steps=max_steps, allowed_keys=allowed)
 
     # ---------------- 内部访问（供 CompiledGraph 使用） ---------------- #
@@ -222,7 +217,7 @@ def _warn_unknown_keys(state: GraphState, allowed_keys: set[str] | None) -> None
         return
     unknown = set(state) - allowed_keys
     if unknown:
-        logger.warning("检测到未声明的状态字段: %s（请在 GraphState 或对应节点的 state_schema 中声明）", sorted(unknown))
+        logger.warning("检测到未声明的状态字段: %s（请在 flow/state.py 的 GraphState 中声明）", sorted(unknown))
 
 
 import logging
