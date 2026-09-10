@@ -29,7 +29,8 @@ PROJECT_ROOT = Path(__file__).resolve().parent
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from config.config import load_routing_config, llm_config  # noqa: E402
+from config.loader import load_routing_config  # noqa: E402
+from config.models import llm_config  # noqa: E402
 from flow.graph import Workflow, build_chat_client  # noqa: E402
 
 logging.basicConfig(

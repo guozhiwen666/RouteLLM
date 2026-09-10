@@ -16,7 +16,7 @@ from collections import deque
 from dataclasses import dataclass, field
 from typing import Any, Iterable
 
-from config.config import TierConfig
+from config.models import TierConfig
 
 
 def empty_usage() -> dict[str, int]:

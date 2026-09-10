@@ -23,7 +23,8 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from config.config import ConfigError, RoutingConfig, TierConfig, parse_yaml_subset  # noqa: E402
+from config.models import ConfigError, RoutingConfig, TierConfig  # noqa: E402
+from config.yaml_subset import parse_yaml_subset  # noqa: E402
 from flow.graph import END, GraphError, StateGraph, Workflow  # noqa: E402
 from utils.guardian import (  # noqa: E402
     ACTION_FORCE_FRONTIER,
@@ -365,7 +366,8 @@ class TestConfig(unittest.TestCase):
         self.assertEqual(data["routing"]["force_upgrade_rules"], ["contains_math_or_code", "context_tokens > 24000"])
 
     def test_project_config_file_parses(self) -> None:
-        from config.config import DEFAULT_CONFIG_FILE, load_routing_config
+        from config.loader import load_routing_config
+        from config.models import DEFAULT_CONFIG_FILE
 
         cfg = load_routing_config(DEFAULT_CONFIG_FILE)
         self.assertEqual([t.name for t in cfg.tiers], ["slm_tiny", "slm_mid", "frontier"])
@@ -374,7 +376,7 @@ class TestConfig(unittest.TestCase):
         self.assertEqual(cfg.cache_invalidate_on, ["model_version", "prompt_version"])
 
     def test_missing_config_file_raises(self) -> None:
-        from config.config import load_routing_config
+        from config.loader import load_routing_config
 
         with self.assertRaises(ConfigError):
             load_routing_config("不存在的文件.yaml")

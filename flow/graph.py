@@ -228,7 +228,8 @@ def _warn_unknown_keys(state: GraphState, allowed_keys: set[str] | None) -> None
 import logging
 from typing import Any
 
-from config.config import RoutingConfig, routing_config
+from config.loader import routing_config
+from config.models import RoutingConfig
 
 from flow.base import BaseNode
 from flow.node.cache_query_node import CacheQueryNode

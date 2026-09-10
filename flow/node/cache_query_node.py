@@ -11,7 +11,8 @@ from __future__ import annotations
 
 import time
 
-from config.config import RoutingConfig, routing_config
+from config.loader import routing_config
+from config.models import RoutingConfig
 from flow.base import BaseNode
 from flow.state import GraphState
 from utils.guardian import GuardianMonitor
@@ -385,7 +386,7 @@ def _to_float(value: Any) -> float | None:
 import logging
 import time
 
-from config.config import RoutingConfig
+from config.models import RoutingConfig
 from flow.state import GraphState
 
 logger = logging.getLogger(__name__)

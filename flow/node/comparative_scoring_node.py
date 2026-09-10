@@ -21,7 +21,8 @@ import threading
 from concurrent.futures import Future, ThreadPoolExecutor
 from typing import Any
 
-from config.config import RoutingConfig, routing_config
+from config.loader import routing_config
+from config.models import RoutingConfig
 from flow.base import BaseNode
 from flow.state import GraphState
 from utils.guardian import GuardianMonitor

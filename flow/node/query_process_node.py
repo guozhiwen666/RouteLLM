@@ -14,7 +14,7 @@ from __future__ import annotations
 import logging
 import uuid
 
-from config.config import llm_config
+from config.models import llm_config
 from flow.base import BaseNode
 from flow.state import GraphState
 from utils.heuristics import build_features

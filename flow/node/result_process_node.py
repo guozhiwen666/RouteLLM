@@ -14,7 +14,8 @@ from __future__ import annotations
 
 import logging
 
-from config.config import RoutingConfig, routing_config
+from config.loader import routing_config
+from config.models import RoutingConfig
 from flow.base import BaseNode
 from utils.guardian import GuardianMonitor
 from utils.metering import Meter, RequestRecord, compute_cost, merge_usage

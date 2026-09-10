@@ -13,6 +13,7 @@ import re
 from pathlib import Path
 from typing import Any
 
+from config.configer import Configer, configer
 from config.models import (
     DEFAULT_CONFIG_FILE,
     ConfigError,
@@ -80,21 +81,21 @@ def load_routing_config(
         max_quality_drop=float(guardian_raw.get("max_quality_drop", defaults.max_quality_drop)),
         consecutive_windows=int(guardian_raw.get("consecutive_windows", defaults.consecutive_windows)),
         auto_rollback=bool(guardian_raw.get("auto_rollback", defaults.auto_rollback)),
-        # 以下为工程参数，只从环境变量覆盖（配置文件里没定义）
-        threshold_max_step=os.getenv("ROUTELLM_THRESHOLD_MAX_STEP", defaults.threshold_max_step),
-        threshold_cooldown_seconds=os.getenv("ROUTELLM_THRESHOLD_COOLDOWN_S", defaults.threshold_cooldown_seconds),
-        route_budget_ms=os.getenv("ROUTELLM_ROUTE_BUDGET_MS", defaults.route_budget_ms),
-        self_eval_timeout_s=os.getenv("ROUTELLM_SELF_EVAL_TIMEOUT_S", defaults.self_eval_timeout_s),
-        slm_timeout_s=os.getenv("ROUTELLM_SLM_TIMEOUT_S", defaults.slm_timeout_s),
-        cloud_timeout_s=os.getenv("ROUTELLM_CLOUD_TIMEOUT_S", defaults.cloud_timeout_s),
-        judge_timeout_s=os.getenv("ROUTELLM_JUDGE_TIMEOUT_S", defaults.judge_timeout_s),
-        max_retries=os.getenv("ROUTELLM_MAX_RETRIES", defaults.max_retries),
-        backoff_base_s=os.getenv("ROUTELLM_BACKOFF_BASE_S", defaults.backoff_base_s),
-        min_output_tokens=os.getenv("ROUTELLM_MIN_OUTPUT_TOKENS", defaults.min_output_tokens),
-        max_repeat_ngram_ratio=os.getenv("ROUTELLM_MAX_REPEAT_RATIO", defaults.max_repeat_ngram_ratio),
-        window_min_samples=os.getenv("ROUTELLM_WINDOW_MIN_SAMPLES", defaults.window_min_samples),
-        cache_length_ratio_min=os.getenv("ROUTELLM_CACHE_LEN_RATIO_MIN", defaults.cache_length_ratio_min),
-        cache_length_ratio_max=os.getenv("ROUTELLM_CACHE_LEN_RATIO_MAX", defaults.cache_length_ratio_max),
+        # 以下为工程参数
+        threshold_max_step=configer.ROUTELLM_THRESHOLD_MAX_STEP,
+        threshold_cooldown_seconds=configer.ROUTELLM_THRESHOLD_COOLDOWN_S,
+        route_budget_ms=configer.ROUTELLM_ROUTE_BUDGET_MS,
+        self_eval_timeout_s=configer.ROUTELLM_SELF_EVAL_TIMEOUT_S,
+        slm_timeout_s=configer.ROUTELLM_SLM_TIMEOUT_S,
+        cloud_timeout_s=configer.ROUTELLM_CLOUD_TIMEOUT_S,
+        judge_timeout_s=configer.ROUTELLM_JUDGE_TIMEOUT_S,
+        max_retries=configer.ROUTELLM_MAX_RETRIES,
+        backoff_base_s=configer.ROUTELLM_BACKOFF_BASE_S,
+        min_output_tokens=configer.ROUTELLM_MIN_OUTPUT_TOKENS,
+        max_repeat_ngram_ratio=configer.ROUTELLM_MAX_REPEAT_RATIO,
+        window_min_samples=configer.ROUTELLM_WINDOW_MIN_SAMPLES,
+        cache_length_ratio_min=configer.ROUTELLM_CACHE_LEN_RATIO_MIN,
+        cache_length_ratio_max=configer.ROUTELLM_CACHE_LEN_RATIO_MAX,
     )
 
     # 强制升级规则：配置文件给的是规则名列表，列表即事实来源（没写的规则 = 关闭）
@@ -247,3 +248,7 @@ def _parse_invalidate_on(raw: Any) -> list[str]:
         if dim not in dims:
             dims.append(dim)
     return dims
+
+# ---- 模块级单例：沿用「导入即配置」的用法（配置文件缺失或字段为空也不炸） ----
+# 放在 loader 而不是单独门面模块：调用方直接从 config.loader / config.models 导入。
+routing_config = load_routing_config()

@@ -10,8 +10,6 @@
 状态字段全部集中声明在 `flow/state.py` 的 `GraphState` 中，图引擎据此做拼写检查。
 """
 
-from __future__ import annotations
-
 import logging
 from abc import ABC, abstractmethod
 from typing import Any
